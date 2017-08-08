@@ -36,32 +36,34 @@ if (program.release) {
   var packageFilename = path.join(currentPath, 'package.json');
   var version = require(packageFilename).version;
 
-  if (!program.test) {
-    // execSync(`node ${path.resolve(__dirname, './update-changelog.js')}`, { stdio: 'inherit' });
-    // execSync('git push');
-  }
+  // if (!program.test) {
+  //   // execSync(`node ${path.resolve(__dirname, './update-changelog.js')}`, { stdio: 'inherit' });
+  //   // execSync('git push');
+  // }
 
   let isSuccess = true;
 
+  let fluidPublishOptions = {
+    "pushVCTagCmd": "git push origin v${version}",
+    "vcTagCmd": "git tag -a v${version} -m \"Tagging the ${version} release\""
+  };
+
   try {
-    // fluidPublish.standard(program.test, {
-    //   "pushVCTagCmd": "git push origin v${version}",
-    //   "vcTagCmd": "git tag -a v${version} -m \"Tagging the ${version} release\""
-    // });
-    fluidPublish.standard(program.test, {
-      "pushVCTagCmd": "git push origin v${version}",
-      "vcTagCmd": "git tag -a v${version} -m \"Tagging the ${version} release\""
-    });
+    fluidPublish.standard(program.test, fluidPublishOptions);
   } catch(err) {
     console.log('Publish error');
+
+    let publishPkg = fluidPublish.getPkg(__dirname);
+    let opts = { ...publishPkg.defaultOptions, ...fluidPublishOptions };
+    // cleanup changes
+    fluidPublish.clean(opts.moduleRoot, opts);
+
     isSuccess = false;
   }
 
   if (!program.test && isSuccess) {
     execSync(`node ${path.resolve(__dirname, './update-changelog.js')}`, { stdio: 'inherit' });
     execSync('git push');
-    // execSync("git push origin v${version}");
-    // execSync("git tag -a v${version} -m \"Tagging the ${version} release\"");
 
     var vNumbers = version.split(".");
     var lastNumber = parseInt(vNumbers[vNumbers.length - 1], 10);
