@@ -49,7 +49,7 @@ if (program.release) {
       "vcTagCmd": "git tag -a v${version} -m \"Tagging the ${version} release\""
     });
   } catch(err) {
-    console.log('Publish error:', err);
+    console.log('Publish error');
     isSuccess = false;
   }
 
