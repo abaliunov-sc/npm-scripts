@@ -9,9 +9,14 @@ var lodash = require('lodash');
 var execSync = require("child_process").execSync;
 
 
-function getTags() {
-  const tags = execSync('git tag');
-  console.log(tags);
+function getTags(version) {
+  const tags = execSync('git tag').toString();
+  const tagList = tags.split('\n');
+
+  for (let i = 0; i < tagList.length; i++) {
+    const tag = tagList[i];
+    console.log(`${tag}${tag.trim() === version ? ` <---` : ``}`);
+  }
 }
 
 program
@@ -75,7 +80,7 @@ if (program.release) {
     execSync(`node ${path.resolve(__dirname, './update-changelog.js')}`, { stdio: 'inherit' });
     execSync('git push');
 
-    getTags();
+    getTags(version);
 
     var vNumbers = version.split(".");
     var lastNumber = parseInt(vNumbers[vNumbers.length - 1], 10);
