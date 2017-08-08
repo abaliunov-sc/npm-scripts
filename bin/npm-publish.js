@@ -5,8 +5,14 @@ var fluidPublish = require('fluid-publish');
 var path = require('path');
 var fs = require('fs');
 var extend = require('extend');
-// var lodash = require('lodash');
+var lodash = require('lodash');
 var execSync = require("child_process").execSync;
+
+
+function getTags() {
+  const tags = execSync('git tag');
+  console.log(tags);
+}
 
 program
   .version(require('../package.json').version)
@@ -54,17 +60,22 @@ if (program.release) {
   } catch(err) {
     console.log('Publish error');
 
-    let publishPkg = fluidPublish.getPkg(__dirname);
-    let opts = extend(true, {}, publishPkg.defaultOptions, fluidPublishOptions);
+    // let publishPkg = fluidPublish.getPkg(__dirname);
+    // let opts = extend(true, {}, publishPkg.defaultOptions, fluidPublishOptions);
     // cleanup changes
-    fluidPublish.clean(opts.moduleRoot, opts);
+    // fluidPublish.clean(opts.moduleRoot, opts);
 
     isSuccess = false;
   }
 
+
+  // 1. Проверить наличие тегов
+
   if (!program.test && isSuccess) {
     execSync(`node ${path.resolve(__dirname, './update-changelog.js')}`, { stdio: 'inherit' });
     execSync('git push');
+
+    getTags();
 
     var vNumbers = version.split(".");
     var lastNumber = parseInt(vNumbers[vNumbers.length - 1], 10);
