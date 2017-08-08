@@ -41,16 +41,19 @@ if (program.release) {
     execSync('git push');
   }
 
+  let isSuccess = true;
+
   try {
     fluidPublish.standard(program.test, {
       "pushVCTagCmd": "git push origin v${version}",
       "vcTagCmd": "git tag -a v${version} -m \"Tagging the ${version} release\""
     });
-  } catch(e) {
-    console.log('Publish error');
+  } catch(err) {
+    console.log('Publish error:', err);
+    isSuccess = false;
   }
 
-  if (!program.test) {
+  if (!program.test && isSuccess) {
     var vNumbers = version.split(".");
     var lastNumber = parseInt(vNumbers[vNumbers.length - 1], 10);
     vNumbers[vNumbers.length - 1] = lastNumber + 1;
