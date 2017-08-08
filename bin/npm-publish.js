@@ -49,8 +49,8 @@ if (program.release) {
     //   "vcTagCmd": "git tag -a v${version} -m \"Tagging the ${version} release\""
     // });
     fluidPublish.standard(program.test, {
-      "pushVCTagCmd": "echo 0",
-      "vcTagCmd": "echo 0"
+      "pushVCTagCmd": "echo \"pushVCTagCmd\"",
+      "vcTagCmd": "echo \"vcTagCmd\""
     });
   } catch(err) {
     console.log('Publish error');
