@@ -1,6 +1,6 @@
 {
   "name": "@albalyu/npm-scripts",
-  "version": "2.0.12",
+  "version": "2.0.13",
   "description": "OpusCapita npm scripts",
   "bin": {
     "grails-plugin-package": "./bin/grails-plugin-package.js",
@@ -38,5 +38,8 @@
     "lodash": "4.13.1",
     "semver-sort": "0.0.4",
     "xml2js": "0.4.16"
+  },
+  "devDependencies": {
+    "extend": "^3.0.1"
   }
 }

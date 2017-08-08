@@ -4,7 +4,8 @@ var program = require('commander');
 var fluidPublish = require('fluid-publish');
 var path = require('path');
 var fs = require('fs');
-var lodash = require('lodash');
+var extend = require('extend');
+// var lodash = require('lodash');
 var execSync = require("child_process").execSync;
 
 program
@@ -54,7 +55,7 @@ if (program.release) {
     console.log('Publish error');
 
     let publishPkg = fluidPublish.getPkg(__dirname);
-    let opts = { ...publishPkg.defaultOptions, ...fluidPublishOptions };
+    let opts = extend(true, {}, publishPkg.defaultOptions, fluidPublishOptions);
     // cleanup changes
     fluidPublish.clean(opts.moduleRoot, opts);
 
