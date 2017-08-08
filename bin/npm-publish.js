@@ -48,7 +48,9 @@ if (program.release) {
     //   "pushVCTagCmd": "git push origin v${version}",
     //   "vcTagCmd": "git tag -a v${version} -m \"Tagging the ${version} release\""
     // });
-    fluidPublish.standard(program.test, {});
+    fluidPublish.standard(program.test, {
+        "pushVCTagCmd": "git push origin v${version}"
+      });
   } catch(err) {
     console.log('Publish error');
     isSuccess = false;
