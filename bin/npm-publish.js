@@ -30,7 +30,8 @@ function isTag(version) {
 
 function isNpmVersion(packageName, version) {
   const npmVersions = execSync('npm version').toJSON();
-  console.log(`npmVersions: ${npmVersions}`);
+  console.log('npmVersions:', npmVersions);
+  console.log('packageName:', packageName);
 
   return npmVersions[packageName] === version;
 }
