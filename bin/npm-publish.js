@@ -38,7 +38,7 @@ if (program.release) {
 
   if (!program.test) {
     // execSync(`node ${path.resolve(__dirname, './update-changelog.js')}`, { stdio: 'inherit' });
-    execSync('git push');
+    // execSync('git push');
   }
 
   let isSuccess = true;
@@ -49,8 +49,8 @@ if (program.release) {
     //   "vcTagCmd": "git tag -a v${version} -m \"Tagging the ${version} release\""
     // });
     fluidPublish.standard(program.test, {
-      "pushVCTagCmd": "git push origin v${version}",
-      "vcTagCmd": "git tag -a v${version} -m \"Tagging the ${version} release\""
+      "pushVCTagCmd": "echo 0",
+      "vcTagCmd": "echo 0"
     });
   } catch(err) {
     console.log('Publish error');
@@ -59,9 +59,9 @@ if (program.release) {
 
   if (!program.test && isSuccess) {
     execSync(`node ${path.resolve(__dirname, './update-changelog.js')}`, { stdio: 'inherit' });
-    // execSync('git push');
-    // execSync("git push origin v${version}");
-    // execSync("git tag -a v${version} -m \"Tagging the ${version} release\"");
+    execSync('git push');
+    execSync("git push origin v${version}");
+    execSync("git tag -a v${version} -m \"Tagging the ${version} release\"");
 
     var vNumbers = version.split(".");
     var lastNumber = parseInt(vNumbers[vNumbers.length - 1], 10);
