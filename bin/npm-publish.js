@@ -10,12 +10,15 @@ var execSync = require("child_process").execSync;
 
 
 function getTags(version) {
+  const strV = `v${version}`;
+  console.log(`version: ${strV}`);
+
   const tags = execSync('git tag').toString();
   const tagList = tags.split('\n');
 
   for (let i = 0; i < tagList.length; i++) {
     const tag = tagList[i];
-    console.log(`${tag}${tag.trim() === version ? ` <---` : ``}`);
+    console.log(`${tag}${tag === strV ? ' <---' : ''}`);
   }
 }
 
