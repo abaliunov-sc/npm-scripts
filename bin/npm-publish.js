@@ -41,10 +41,14 @@ if (program.release) {
     execSync('git push');
   }
 
-  fluidPublish.standard(program.test, {
-    "pushVCTagCmd": "git push origin v${version}",
-    "vcTagCmd": "git tag -a v${version} -m \"Tagging the ${version} release\""
-  });
+  try {
+    fluidPublish.standard(program.test, {
+      "pushVCTagCmd": "git push origin v${version}",
+      "vcTagCmd": "git tag -a v${version} -m \"Tagging the ${version} release\""
+    });
+  } catch(e) {
+    console.log('Publish error');
+  }
 
   if (!program.test) {
     var vNumbers = version.split(".");

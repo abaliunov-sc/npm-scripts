@@ -1,14 +1,11 @@
 {
-  "name": "@opuscapita/npm-scripts",
-  "version": "2.0.0-beta.3",
+  "name": "@albalyu/npm-scripts",
+  "version": "2.0.2",
   "description": "OpusCapita npm scripts",
   "bin": {
     "grails-plugin-package": "./bin/grails-plugin-package.js",
     "grails-plugin-deploy": "./bin/grails-plugin-deploy.js",
     "grails-plugin-install": "./bin/grails-plugin-install.js",
-    "grails3-plugin-package": "./bin/grails3-plugin-package.js",
-    "grails3-plugin-deploy": "./bin/grails3-plugin-deploy.js",
-    "grails3-plugin-install": "./bin/grails3-plugin-install.js",
     "npm-publish": "./bin/npm-publish.js",
     "update-changelog": "./bin/update-changelog.js",
     "translation-checker": "./bin/translation-checker.js"
@@ -30,14 +27,13 @@
     "tools"
   ],
   "dependencies": {
-    "archiver": "0.14.2",
+    "archiver": "2.0.0",
     "commander": "2.9.0",
-    "flat": "2.0.1",
+    "flat": "3.0.0",
     "fluid-publish": "1.1.0",
-    "fs-extra": "0.30.0",
-    "glob": "7.1.0",
-    "globule": "0.2.0",
-    "handlebars": "4.0.5",
+    "glob": "7.1.2",
+    "globule": "1.2.0",
+    "handlebars": "4.0.10",
     "homedir": "0.6.0",
     "lodash": "4.13.1",
     "semver-sort": "0.0.4",
