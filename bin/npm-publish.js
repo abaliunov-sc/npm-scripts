@@ -9,17 +9,30 @@ var lodash = require('lodash');
 var execSync = require("child_process").execSync;
 
 
-function getTags(version) {
+function isTag(version) {
   const strV = `v${version}`;
-  console.log(`version: ${strV}`);
+  // console.log(`version: ${strV}`);
 
-  const tags = execSync('git tag').toString();
-  const tagList = tags.split('\n');
+  // const tags = execSync('git tag').toString();
+  const tagList = execSync('git tag').toString().split('\n');
 
   for (let i = 0; i < tagList.length; i++) {
     const tag = tagList[i];
     console.log(`${tag}${tag === strV ? ' <---' : ''}`);
+
+    if (tagList[i] === strV) {
+      return true;
+    }
   }
+
+  return false;
+}
+
+function isNpmVersion(packageName, version) {
+  const npmVersions = execSync('npm version').toJSON();
+  console.log(`npmVersions: ${npmVersions}`);
+
+  return npmVersions[packageName] === version;
 }
 
 program
@@ -50,56 +63,64 @@ if (program.release) {
   var currentPath = process.cwd();
   var packageFilename = path.join(currentPath, 'package.json');
   var version = require(packageFilename).version;
+  var packageName = require(packageFilename).name;
 
   // if (!program.test) {
   //   // execSync(`node ${path.resolve(__dirname, './update-changelog.js')}`, { stdio: 'inherit' });
   //   // execSync('git push');
   // }
 
-  let isSuccess = true;
-
-  let fluidPublishOptions = {
+  fluidPublish.standard(program.test, {
     "pushVCTagCmd": "git push origin v${version}",
     "vcTagCmd": "git tag -a v${version} -m \"Tagging the ${version} release\""
-  };
+  });
 
-  try {
-    fluidPublish.standard(program.test, fluidPublishOptions);
-  } catch(err) {
-    console.log('Publish error');
+  if (!program.test) {
+    let hasTag = isTag(version);
+    let hasVersion = isNpmVersion(packageName, version);
 
-    // let publishPkg = fluidPublish.getPkg(__dirname);
-    // let opts = extend(true, {}, publishPkg.defaultOptions, fluidPublishOptions);
-    // cleanup changes
-    // fluidPublish.clean(opts.moduleRoot, opts);
+    if (hasTag) {
+      console.log(`Tag ${version} saved`);
+    }
 
-    isSuccess = false;
-  }
+    else {
+      console.log(`Tag ${version} did not saved`);
+    }
+    if (hasVersion) {
+      console.log(`Version ${version} saved`);
+    }
 
+    else {
+      console.log(`Version ${version} did not saved`);
+    }
 
-  // 1. Проверить наличие тегов
+    // Successful publish
+    if (hasTag && hasVersion) {
+      execSync(`node ${path.resolve(__dirname, './update-changelog.js')}`, { stdio: 'inherit' });
+      execSync('git push');
 
-  if (!program.test && isSuccess) {
-    execSync(`node ${path.resolve(__dirname, './update-changelog.js')}`, { stdio: 'inherit' });
-    execSync('git push');
+      var vNumbers = version.split(".");
+      var lastNumber = parseInt(vNumbers[vNumbers.length - 1], 10);
+      vNumbers[vNumbers.length - 1] = lastNumber + 1;
+      var targetVersion = vNumbers.join('.');
 
-    getTags(version);
+      var VERSION_REGEXP = new RegExp(
+        '([\'|\"]?version[\'|\"]?[ ]*:[ ]*[\'|\"]?)[\\d||A-a|.|-]*([\'|\"]?)', 'gi');
 
-    var vNumbers = version.split(".");
-    var lastNumber = parseInt(vNumbers[vNumbers.length - 1], 10);
-    vNumbers[vNumbers.length - 1] = lastNumber + 1;
-    var targetVersion = vNumbers.join('.');
+      var packageData = fs.readFileSync(packageFilename).toString();
+      packageData = packageData.replace(VERSION_REGEXP, "\"version\": \"" + targetVersion + "\"");
+      fs.writeFileSync(packageFilename, packageData);
 
-    var VERSION_REGEXP = new RegExp(
-      '([\'|\"]?version[\'|\"]?[ ]*:[ ]*[\'|\"]?)[\\d||A-a|.|-]*([\'|\"]?)', 'gi');
-
-    var packageData = fs.readFileSync(packageFilename).toString();
-    packageData = packageData.replace(VERSION_REGEXP, "\"version\": \"" + targetVersion + "\"");
-    fs.writeFileSync(packageFilename, packageData);
-
-    execSync('git add package.json');
-    execSync(`git commit -m "${updatingVersionMessage} ${targetVersion}"`);
-    execSync('git push');
+      execSync('git add package.json');
+      execSync(`git commit -m "${updatingVersionMessage} ${targetVersion}"`);
+      execSync('git push');
+    } else {
+      if (hasTag) { // Delete tag from GitHub
+        console.log('Delete tag from GitHub');
+      } else { // Delete version from npm
+        console.log('Delete version from npm');
+      }
+    }
   }
 } else {
   fluidPublish.dev(program.test, {
