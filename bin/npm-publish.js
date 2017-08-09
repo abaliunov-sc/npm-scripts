@@ -29,7 +29,7 @@ function isTag(version) {
 }
 
 function isNpmVersion(packageName, version) {
-  const npmVersions = execSync('npm version').toJSON();
+  const npmVersions = JSON.parse(execSync('npm version').toString().replace("'", '"'));
   console.log('npmVersions:', npmVersions);
   console.log('packageName:', packageName);
 
